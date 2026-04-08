@@ -184,7 +184,7 @@ function App() {
       method: 'POST',
       body: formData,
       mode: 'no-cors' // Crucial to prevent CORS blocks on silent Form submits
-    }).catch(e => console.log("Analytics ping failed via network blocker"));
+    }).catch(() => console.log("Analytics ping failed via network blocker"));
   };
 
   const insertCoin = async () => {
