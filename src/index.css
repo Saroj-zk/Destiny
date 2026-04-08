@@ -200,4 +200,32 @@ html, body {
 .ticket-quote { font-family: 'Playfair Display', serif; font-size: 1.5rem; line-height: 1.25; font-style: italic; font-weight: 700; margin-bottom: 1.5rem; }
 .ticket-forecast { font-family: 'Space Mono', monospace; font-size: 0.95rem; line-height: 1.6; text-align: left; background: #f4f3ea; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; }
 .close-btn { background: transparent; border: 1px solid var(--text-main); color: var(--text-main); padding: 0.8rem; border-radius: 999px; font-family: inherit; font-weight: 600; cursor: pointer; width: 100%; font-size: 1rem;}
-.close-btn:hover { background: var(--text-main); color: white; }
+.close-btn:hover {
+  background: var(--text-main);
+  color: white;
+}
+
+.user-indicator {
+  margin-bottom: 2rem;
+  font-size: 0.85rem;
+  color: #666;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  align-items: center;
+}
+
+.logout-link {
+  background: none;
+  border: none;
+  color: var(--c-red);
+  text-decoration: underline;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.8rem;
+  padding: 0;
+}
+
+.logout-link:hover {
+  color: #a02029;
+}

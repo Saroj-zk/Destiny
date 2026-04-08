@@ -43,6 +43,7 @@ function App() {
   const [baseMetric, setBaseMetric] = useState(14024);
   
   // Machine States
+  const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [ticketReady, setTicketReady] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -82,9 +83,20 @@ function App() {
   }, [cookieState.lastCrackTime]);
 
   const handleLogin = () => {
-    const mockUser = { handle: '@destiny_seeker' };
-    setUser(mockUser);
-    localStorage.setItem('twitter_user', JSON.stringify(mockUser));
+    setIsLoggingIn(true);
+    // Simulate a secure redirect and callback
+    setTimeout(() => {
+      const mockUser = { handle: '@destiny_seeker' };
+      setUser(mockUser);
+      localStorage.setItem('twitter_user', JSON.stringify(mockUser));
+      setIsLoggingIn(false);
+    }, 1200);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('twitter_user');
+    setUser(null);
+    // We keep cookieState so they can't log out to "cheat" the 24h limit
   };
 
   const insertCoin = async () => {
@@ -206,12 +218,16 @@ function App() {
             <p className="panel-sub">
               Connect your X account to power the machine. Find out what your timeline weighs in fate.
             </p>
-            <button className="btn" onClick={handleLogin}>
-              Connect X Profile
+            <button className="btn" onClick={handleLogin} disabled={isLoggingIn}>
+              {isLoggingIn ? "Verifying..." : "Connect X Profile"}
             </button>
           </>
         ) : (
           <>
+            <div className="user-indicator">
+              <span>Connected as <strong>{user.handle}</strong></span>
+              <button onClick={handleLogout} className="logout-link">Sign Out</button>
+            </div>
             {canCrack ? (
               <>
                 <h1 className="panel-title">Ready.</h1>
