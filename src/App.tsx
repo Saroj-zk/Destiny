@@ -231,7 +231,7 @@ function App() {
     }
 
     const text = `I just weighed my timeline's aura on the Destiny Scale.\n\n"${cookieState.currentResult.quote}"\n\n`;
-    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent("https://destiny-scale.app")}`;
+    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent("https://deztiny.vercel.app/")}`;
     window.open(shareUrl, '_blank');
   };
 
