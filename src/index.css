@@ -196,7 +196,21 @@ html, body {
 .modal-overlay.active { opacity: 1; pointer-events: all; }
 .reading-ticket-large { width: 100%; max-width: 440px; max-height: 85vh; overflow-y: auto; background: #fffdf5; border-radius: 0 0 10px 10px; padding: 2rem 1.5rem; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; transform: translateY(50px) scale(0.9); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); text-align: center; background-image: radial-gradient(circle at 10px 0, transparent 10px, #fffdf5 11px); background-size: 25px 20px; background-repeat: repeat-x; background-position: top center; border-top: 1px dashed #ccc; }
 .modal-overlay.active .reading-ticket-large { transform: translateY(0) scale(1); }
-.ticket-header { font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 0.1em; color: #555; text-transform: uppercase; margin-bottom: 1.5rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+.ticket-header { font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 0.1em; color: #555; text-transform: uppercase; margin-bottom: 0.5rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+
+.ticket-user-meta {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.ticket-user-meta .highlight {
+  color: var(--c-red);
+  font-weight: 700;
+}
+
 .ticket-quote { font-family: 'Playfair Display', serif; font-size: 1.5rem; line-height: 1.25; font-style: italic; font-weight: 700; margin-bottom: 1.5rem; }
 .ticket-forecast { font-family: 'Space Mono', monospace; font-size: 0.95rem; line-height: 1.6; text-align: left; background: #f4f3ea; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; }
 .close-btn { background: transparent; border: 1px solid var(--text-main); color: var(--text-main); padding: 0.8rem; border-radius: 999px; font-family: inherit; font-weight: 600; cursor: pointer; width: 100%; font-size: 1rem;}
