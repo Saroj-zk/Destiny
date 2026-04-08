@@ -41,6 +41,7 @@ function App() {
   
   const [timeLeft, setTimeLeft] = useState<{ hours: string; mins: string; secs: string } | null>(null);
   const [baseMetric, setBaseMetric] = useState(14024);
+  const [handleInput, setHandleInput] = useState<string>('');
   
   // Machine States
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
@@ -82,14 +83,19 @@ function App() {
     return () => clearInterval(interval);
   }, [cookieState.lastCrackTime]);
 
-  const handleLogin = () => {
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!handleInput.trim()) return;
+    
     setIsLoggingIn(true);
     // Simulate a secure redirect and callback
     setTimeout(() => {
-      const mockUser = { handle: '@destiny_seeker' };
+      const handle = handleInput.startsWith('@') ? handleInput : `@${handleInput}`;
+      const mockUser = { handle };
       setUser(mockUser);
       localStorage.setItem('twitter_user', JSON.stringify(mockUser));
       setIsLoggingIn(false);
+      setHandleInput('');
     }, 1200);
   };
 
@@ -218,15 +224,25 @@ function App() {
             <p className="panel-sub">
               Connect your X account to power the machine. Find out what your timeline weighs in fate.
             </p>
-            <button className="btn" onClick={handleLogin} disabled={isLoggingIn}>
-              {isLoggingIn ? "Verifying..." : "Connect X Profile"}
-            </button>
+            <form className="login-form" onSubmit={handleLogin}>
+              <input 
+                type="text" 
+                className="handle-input" 
+                placeholder="Enter your X handle..." 
+                value={handleInput}
+                onChange={(e) => setHandleInput(e.target.value)}
+                disabled={isLoggingIn}
+              />
+              <button type="submit" className="btn" disabled={isLoggingIn || !handleInput.trim()}>
+                {isLoggingIn ? "Verifying..." : "Analyze Profile"}
+              </button>
+            </form>
           </>
         ) : (
           <>
             <div className="user-indicator">
-              <span>Connected as <strong>{user.handle}</strong></span>
-              <button onClick={handleLogout} className="logout-link">Sign Out</button>
+              <span>Connected as <strong className="user-handle-text">{user.handle}</strong></span>
+              <button onClick={handleLogout} className="logout-btn">Change Account</button>
             </div>
             {canCrack ? (
               <>
