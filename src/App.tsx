@@ -19,49 +19,56 @@ const playMechanicalSound = () => {
     const audioCtx = new AudioContextClass();
     const duration = 4.0;
     
-    // Simulate gear ticking (mechanical wheel spins)
-    const clicks = 45; // About 11 clicks per second
-    for (let i = 0; i < clicks; i++) {
-      const time = audioCtx.currentTime + (i * (duration / clicks));
-      
-      const osc = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      
-      osc.type = 'triangle';
-      // High pitch metallic tick that drops rapidly
-      osc.frequency.setValueAtTime(800 + Math.random() * 200, time);
-      osc.frequency.exponentialRampToValueAtTime(100, time + 0.02);
-      
-      // Sharp attack and decay
-      gainNode.gain.setValueAtTime(0, time);
-      gainNode.gain.linearRampToValueAtTime(0.15, time + 0.002);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.03);
-      
-      osc.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-      
-      osc.start(time);
-      osc.stop(time + 0.04);
+    // ARCADE 8-BIT SPIN "TRING-A-LING"
+    // Using a fast ping-pong arpeggio of a major chord to sound like a vintage digital arcade machine calculating
+    const notes = [440, 554, 659, 880, 1108, 1318]; // A major progression
+    const speed = 0.06; // Very rapid arcade calculation speed
+    const steps = Math.floor(duration / speed);
+    
+    for(let i=0; i<steps; i++) {
+        const t = audioCtx.currentTime + (i * speed);
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        
+        osc.type = 'square'; // 8-bit aesthetic
+        
+        let index = i % notes.length;
+        if (Math.floor(i / notes.length) % 2 !== 0) {
+            index = notes.length - 1 - index; // Bounce up and down the notes
+        }
+        
+        osc.frequency.setValueAtTime(notes[index], t);
+        
+        gainNode.gain.setValueAtTime(0, t);
+        gainNode.gain.linearRampToValueAtTime(0.08, t + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, t + speed - 0.01);
+        
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        osc.start(t);
+        osc.stop(t + speed);
     }
 
-    // Ticket printing / Ding sound at the exact end when the ticket drops
+    // FINAL "TRING!" (Classic Arcade double-chime like a jackpot)
     const dingTime = audioCtx.currentTime + duration;
-    const dingOsc = audioCtx.createOscillator();
-    const dingGain = audioCtx.createGain();
     
-    dingOsc.type = 'sine'; // Clean bell sound
-    dingOsc.frequency.setValueAtTime(1200, dingTime);
-    dingOsc.frequency.exponentialRampToValueAtTime(600, dingTime + 0.5); 
+    const playCoinNote = (freq: number, startTime: number, dur: number) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.15, startTime + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + dur);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + dur);
+    };
     
-    dingGain.gain.setValueAtTime(0, dingTime);
-    dingGain.gain.linearRampToValueAtTime(0.4, dingTime + 0.01);
-    dingGain.gain.exponentialRampToValueAtTime(0.001, dingTime + 1.0);
-    
-    dingOsc.connect(dingGain);
-    dingGain.connect(audioCtx.destination);
-    
-    dingOsc.start(dingTime);
-    dingOsc.stop(dingTime + 1.2);
+    playCoinNote(987.77, dingTime, 0.1); // Quick lower tone (B5)
+    playCoinNote(1318.51, dingTime + 0.1, 0.8); // Satisfying held high tone (E6)
     
   } catch (e) {
     console.log('Web Audio API not supported or blocked by browser.');
