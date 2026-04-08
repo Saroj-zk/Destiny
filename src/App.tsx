@@ -288,9 +288,11 @@ function App() {
               destiny. • {new Date().toLocaleDateString()}
             </div>
             
-            <div className="ticket-user-meta">
-              Profile of <span className="highlight">{user.handle}</span>
-            </div>
+            {user && (
+              <div className="ticket-user-meta">
+                Profile of <span className="highlight">{user.handle}</span>
+              </div>
+            )}
             
             <div className="ticket-quote">
               "{cookieState.currentResult.quote}"
