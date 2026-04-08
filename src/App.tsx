@@ -12,6 +12,62 @@ interface CookieState {
   currentResult: DestinyResult | null;
 }
 
+const playMechanicalSound = () => {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const audioCtx = new AudioContextClass();
+    const duration = 4.0;
+    
+    // Simulate gear ticking (mechanical wheel spins)
+    const clicks = 45; // About 11 clicks per second
+    for (let i = 0; i < clicks; i++) {
+      const time = audioCtx.currentTime + (i * (duration / clicks));
+      
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      osc.type = 'triangle';
+      // High pitch metallic tick that drops rapidly
+      osc.frequency.setValueAtTime(800 + Math.random() * 200, time);
+      osc.frequency.exponentialRampToValueAtTime(100, time + 0.02);
+      
+      // Sharp attack and decay
+      gainNode.gain.setValueAtTime(0, time);
+      gainNode.gain.linearRampToValueAtTime(0.15, time + 0.002);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.03);
+      
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      osc.start(time);
+      osc.stop(time + 0.04);
+    }
+
+    // Ticket printing / Ding sound at the exact end when the ticket drops
+    const dingTime = audioCtx.currentTime + duration;
+    const dingOsc = audioCtx.createOscillator();
+    const dingGain = audioCtx.createGain();
+    
+    dingOsc.type = 'sine'; // Clean bell sound
+    dingOsc.frequency.setValueAtTime(1200, dingTime);
+    dingOsc.frequency.exponentialRampToValueAtTime(600, dingTime + 0.5); 
+    
+    dingGain.gain.setValueAtTime(0, dingTime);
+    dingGain.gain.linearRampToValueAtTime(0.4, dingTime + 0.01);
+    dingGain.gain.exponentialRampToValueAtTime(0.001, dingTime + 1.0);
+    
+    dingOsc.connect(dingGain);
+    dingGain.connect(audioCtx.destination);
+    
+    dingOsc.start(dingTime);
+    dingOsc.stop(dingTime + 1.2);
+    
+  } catch (e) {
+    console.log('Web Audio API not supported or blocked by browser.');
+  }
+};
+
 const renderRing = (count: number, distance: number) => {
   const colors = ['#f43f5e', '#eab308', '#22c55e', '#3b82f6', '#a855f7'];
   return Array.from({ length: count }).map((_, i) => {
@@ -110,6 +166,9 @@ function App() {
     
     setIsAnalyzing(true);
     setTicketReady(false);
+
+    // Audio feedback for mechanical spin
+    playMechanicalSound();
 
     // Make the lights chase for 4 seconds!
     await new Promise(r => setTimeout(r, 4000));
