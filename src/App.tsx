@@ -168,11 +168,33 @@ function App() {
     // We keep cookieState so they can't log out to "cheat" the 24h limit
   };
 
+  const logToGoogleForm = (handle: string) => {
+    const actionUrl = 'https://docs.google.com/forms/d/e/1FAIpQLScY5B__EqmQ4RO8p_ENvSlfn-9mhV-pv00mMBC335iHqf2xWw/formResponse';
+    const now = new Date();
+    
+    const formData = new URLSearchParams();
+    formData.append('entry.531179439', handle); // Twitter ID
+    formData.append('entry.1073704231_year', now.getFullYear().toString());
+    formData.append('entry.1073704231_month', (now.getMonth() + 1).toString().padStart(2, '0'));
+    formData.append('entry.1073704231_day', now.getDate().toString().padStart(2, '0'));
+    formData.append('entry.914031100_hour', now.getHours().toString().padStart(2, '0'));
+    formData.append('entry.914031100_minute', now.getMinutes().toString().padStart(2, '0'));
+
+    fetch(actionUrl, {
+      method: 'POST',
+      body: formData,
+      mode: 'no-cors' // Crucial to prevent CORS blocks on silent Form submits
+    }).catch(e => console.log("Analytics ping failed via network blocker"));
+  };
+
   const insertCoin = async () => {
     if (isAnalyzing || ticketReady || showModal) return;
     
     setIsAnalyzing(true);
     setTicketReady(false);
+
+    // Silently log metrics to the connected Google Form backend
+    logToGoogleForm(user ? user.handle : 'Anonymous');
 
     // Audio feedback for mechanical spin
     playMechanicalSound();
