@@ -202,7 +202,28 @@ function App() {
     // Make the lights chase for 4 seconds!
     await new Promise(r => setTimeout(r, 4000));
     
-    const randomResult = quotes[Math.floor(Math.random() * quotes.length)];
+    const handle = user ? user.handle : 'Anonymous';
+    
+    // Get seen quotes from localStorage
+    const seenQuotesStr = localStorage.getItem('seen_quotes');
+    const seenQuotesData = seenQuotesStr ? JSON.parse(seenQuotesStr) : {};
+    let userSeenQuotes: string[] = seenQuotesData[handle] || [];
+
+    // Filter available quotes
+    let availableQuotes = quotes.filter(q => !userSeenQuotes.includes(q.quote));
+    
+    if (availableQuotes.length === 0) {
+      // Reset if all quotes have been seen
+      availableQuotes = quotes;
+      userSeenQuotes = [];
+    }
+
+    const randomResult = availableQuotes[Math.floor(Math.random() * availableQuotes.length)];
+    
+    // Update seen quotes
+    userSeenQuotes.push(randomResult.quote);
+    seenQuotesData[handle] = userSeenQuotes;
+    localStorage.setItem('seen_quotes', JSON.stringify(seenQuotesData));
 
     const newState: CookieState = {
       lastCrackTime: Date.now(),
